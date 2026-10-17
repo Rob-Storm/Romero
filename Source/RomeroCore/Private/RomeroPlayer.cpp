@@ -13,6 +13,14 @@ ARomeroPlayer::ARomeroPlayer()
 
 void ARomeroPlayer::HandleWeaponChanged(UWeapon* weapon)
 {
+	if(!weapon)
+	{
+		HeldWeapon->SetVisibility(false);
+		return;
+	}
+
+	HeldWeapon->SetVisibility(true);
+
 	HeldWeapon->SetStaticMesh(weapon->GetWeaponData()->WorldModel);
 }
 
