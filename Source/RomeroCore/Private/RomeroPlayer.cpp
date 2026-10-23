@@ -6,6 +6,7 @@ ARomeroPlayer::ARomeroPlayer()
 	bReplicates = true;
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
+
 	HeldWeapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeldWeapon"));
 
 	HeldWeapon->SetupAttachment(GetMesh(), FName(TEXT("WeaponSocket")));
