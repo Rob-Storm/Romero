@@ -12,6 +12,9 @@ AItemActor::AItemActor()
 	
 	Model = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Model"));
 
+	Model->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+	Model->SetCollisionResponseToChannel(ECollisionChannel::ECC_Vehicle, ECollisionResponse::ECR_Ignore);
+
 	RootComponent = Model;
 }
 
