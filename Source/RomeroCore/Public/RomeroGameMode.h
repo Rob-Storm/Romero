@@ -12,5 +12,14 @@ class ARomeroGameMode : public AGameMode
 
 
 public:
+
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+	virtual void Logout(AController* Exiting) override;
+
+
+private:
+
+	UFUNCTION()
+	void SendServerMessage(const FString &Message);
 	
 };
