@@ -23,7 +23,7 @@ public:
 			return;
 		}
 
-		LocalPlayer->PlayerName = NewName;
+		LocalPlayer->SetPlayerName(NewName);
 	}
 
 };
