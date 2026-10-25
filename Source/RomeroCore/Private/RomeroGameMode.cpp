@@ -21,6 +21,13 @@ void ARomeroGameMode::Logout(AController* Exiting)
 {
 	Super::Logout(Exiting);
 
+	// trying to create UI while the world
+	// is being 'torn down' will cause a crash
+	if(Exiting == UGameplayStatics::GetPlayerController(this, 0))
+	{
+		return;
+	}
+
 	if(TObjectPtr<APlayerController> PC = Cast<APlayerController>(Exiting))
 	{
 		if(TObjectPtr<APlayerState> PS = PC->GetPlayerState<APlayerState>())

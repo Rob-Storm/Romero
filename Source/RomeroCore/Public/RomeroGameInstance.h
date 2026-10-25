@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "RomeroLocalPlayer.h"
 
 #include "RomeroGameInstance.generated.h"
 
@@ -12,7 +13,17 @@ class URomeroGameInstance : public UGameInstance
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Multiplayer")
-	FString PlayerName = TEXT("ragamuffin");
+	UFUNCTION(BlueprintCallable, Category="Multiplayer")
+	void SetPlayerName(const FString &NewName)
+	{
+		URomeroLocalPlayer* LocalPlayer = Cast<URomeroLocalPlayer>(GetFirstGamePlayer());
+
+		if(!LocalPlayer)
+		{
+			return;
+		}
+
+		LocalPlayer->PlayerName = NewName;
+	}
 
 };
