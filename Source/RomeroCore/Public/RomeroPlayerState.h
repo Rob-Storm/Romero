@@ -11,5 +11,7 @@ class ARomeroPlayerState : public APlayerState
 	GENERATED_BODY()
 
 public:
+
+	virtual void PostInitializeComponents() override;
 	
 };
