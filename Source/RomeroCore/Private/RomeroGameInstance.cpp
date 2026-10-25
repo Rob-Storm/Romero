@@ -4,7 +4,7 @@
 #include "OnlineSubsystem.h"
 #include "Interfaces/OnlineSessionInterface.h"
 
-void URomeroGameInstance::HostSession(TSoftObjectPtr<UWorld> Level, const FString &ServerName, bool IsDedicatedServer, int32 MaxPlayers)
+void URomeroGameInstance::HostSession(TSoftObjectPtr<UWorld> Level, bool IsDedicatedServer, int32 MaxPlayers)
 {
     if (Level.IsNull())
     {
@@ -45,15 +45,16 @@ void URomeroGameInstance::HostSession(TSoftObjectPtr<UWorld> Level, const FStrin
 
     FOnlineSessionSettings Settings;
 
-    Settings.NumPublicConnections = MaxPlayers;
-    Settings.NumPrivateConnections = 0;
+	Settings.bIsLANMatch = true;
+	Settings.bShouldAdvertise = true;
+	Settings.bAllowJoinInProgress = true;
+	Settings.bAllowJoinViaPresence = false;
+	Settings.bUsesPresence = false;
+	Settings.bUseLobbiesIfAvailable = false;
 
-    Settings.bShouldAdvertise = true;
-    Settings.bAllowJoinInProgress = true;
+	Settings.NumPublicConnections = MaxPlayers;
+	Settings.NumPrivateConnections = 0;    
 
-    Settings.bIsLANMatch = Subsystem->GetSubsystemName() == FName("NULL");
-
-	Settings.Set(FName("SERVER_NAME"), ServerName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
     Settings.Set(FName("MAP_NAME"), Level.GetAssetName(), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
     Settings.Set(FName("SERVER_TYPE"), 

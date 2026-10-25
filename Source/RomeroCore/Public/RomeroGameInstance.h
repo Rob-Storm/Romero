@@ -18,9 +18,6 @@ struct FServerSessionInfo
 
 public:
 
-	UPROPERTY(BlueprintReadOnly, Category = "Session")
-    FString ServerName;
-
     UPROPERTY(BlueprintReadOnly, Category = "Session")
     FString MapName;
 
@@ -46,7 +43,7 @@ public:
 	FString PlayerName = TEXT("ragamuffin");
 
 	UFUNCTION(BlueprintCallable, Category="Multiplayer")
-	void HostSession(TSoftObjectPtr<UWorld> Level, const FString &ServerName, bool IsDedicatedServer, int32 MaxPlayers);
+	void HostSession(TSoftObjectPtr<UWorld> Level, bool IsDedicatedServer, int32 MaxPlayers);
 
 	UFUNCTION(BlueprintPure, Category="Multiplayer", DisplayName="Get Session Info")
 	FServerSessionInfo K2_GetSessionInfo(const FBlueprintSessionResult &SearchResult) const
@@ -60,7 +57,6 @@ public:
 
 	    const FOnlineSessionSettings& Settings = SearchResult.Session.SessionSettings;
 
-	    Settings.Get(FName("SERVER_NAME"), Info.ServerName);
     	Settings.Get(FName("MAP_NAME"), Info.MapName);
     	Settings.Get(FName("SERVER_TYPE"), Info.ServerType);
 
