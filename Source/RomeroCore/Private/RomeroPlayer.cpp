@@ -1,20 +1,25 @@
 #include "RomeroPlayer.h"
 #include "UObject/Object.h"
+#include "Net/UnrealNetwork.h"
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/PlayerState.h"
 
 ARomeroPlayer::ARomeroPlayer()
 {
 	bReplicates = true;
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
+	PlayerNameText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("PlayerName"));
 
 	HeldWeapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeldWeapon"));
 
 	HeldWeapon->SetupAttachment(GetMesh(), FName(TEXT("WeaponSocket")));
+	PlayerNameText->SetupAttachment(RootComponent);
 }
 
-void ARomeroPlayer::HandleWeaponChanged(UWeapon* weapon)
+void ARomeroPlayer::HandleWeaponChanged(UWeapon* Weapon)
 {
-	if(!weapon)
+	if(!Weapon)
 	{
 		HeldWeapon->SetVisibility(false);
 		return;
@@ -22,7 +27,34 @@ void ARomeroPlayer::HandleWeaponChanged(UWeapon* weapon)
 
 	HeldWeapon->SetVisibility(true);
 
-	HeldWeapon->SetStaticMesh(weapon->GetWeaponData()->WorldModel);
+	HeldWeapon->SetStaticMesh(Weapon->GetWeaponData()->WorldModel);
+}
+
+void ARomeroPlayer::Server_SetPlayerText_Implementation()
+{
+	TObjectPtr<APlayerController> PC = Cast<APlayerController>(GetOwner());
+
+	if(!PC)
+	{
+		return;
+	}
+
+	TObjectPtr<APlayerState> PS = Cast<APlayerState>(PC->PlayerState);
+
+	if(!PS)
+	{
+		return;
+	}
+
+	PawnName = PS->GetPlayerName();
+	OnRep_SetPawnName();
+}
+
+void ARomeroPlayer::BeginPlay()
+{
+	Super::BeginPlay();
+
+	Server_SetPlayerText();
 }
 
 void ARomeroPlayer::PostInitializeComponents()
@@ -30,4 +62,17 @@ void ARomeroPlayer::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	WeaponComponent->OnWeaponChanged.AddDynamic(this, &ARomeroPlayer::HandleWeaponChanged);
+}
+
+void ARomeroPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ARomeroPlayer, PawnName);
+}
+
+
+void ARomeroPlayer::OnRep_SetPawnName()
+{
+	PlayerNameText->SetText(FText::FromString(PawnName));
 }

@@ -12,7 +12,7 @@ class AMainMenuGameMode : public AGameMode
 
 public:
 
-	UFUNCTION(BlueprintImplementableEvent, Category="RomeroCore")
+	UFUNCTION(BlueprintImplementableEvent, Category="MainMenu")
 	void PreMapTransition();
 
 	virtual void StartToLeaveMap() override
