@@ -20,4 +20,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Damageable")
 	void Damage(class ARomeroPlayerController* CallingController, class UWeaponData* Weapon);
 	virtual void Damage_Implementation(class ARomeroPlayerController* CallingController, class UWeaponData* Weapon);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Damageable")
+	void Kill(class ARomeroPlayerController* CallingController);
+	virtual void Kill_Implementation(class ARomeroPlayerController* CallingController);
 };

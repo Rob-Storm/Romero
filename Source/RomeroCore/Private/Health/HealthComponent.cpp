@@ -14,7 +14,8 @@ void UHealthComponent::Server_AddHealth_Implementation(int32 amount)
 	
 void UHealthComponent::Server_Kill_Implementation()
 {
-	OnKilled.Broadcast();
+	CurrentHealth = 0;
+	OnRep_CurentHealth();
 }
 
 void UHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

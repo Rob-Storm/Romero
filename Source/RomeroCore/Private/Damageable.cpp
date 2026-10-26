@@ -4,3 +4,8 @@ void IDamageable::Damage_Implementation(class ARomeroPlayerController* CallingCo
 {
 
 }
+
+void IDamageable::Kill_Implementation(class ARomeroPlayerController* CallingController)
+{
+	
+}

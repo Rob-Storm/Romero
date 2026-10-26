@@ -26,6 +26,12 @@ public:
 	UPROPERTY(ReplicatedUsing = OnRep_CurentHealth, EditAnywhere, BlueprintReadWrite, Category="Health")
 	int32 CurrentHealth = 100;
 
+	UFUNCTION(BlueprintCallable, Category="Health")
+	bool GetIsKilled() const
+	{
+		return CurrentHealth <= 0;
+	}
+
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category="Health")
 	void Server_AddHealth(int32 amount);
 

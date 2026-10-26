@@ -35,6 +35,4 @@ void ARomeroCharacter::HandleKilled()
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetSimulatePhysics(true);
-
-	bReplicates = false;
 }
