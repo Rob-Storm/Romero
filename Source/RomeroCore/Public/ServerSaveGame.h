@@ -16,9 +16,9 @@
  *
  * 	Get FUniqueNetIdRepl to differentiate players at the connection level (this does persist between joins!)
  *
- * 	Server creates a map between NetId and PlayerSaveGame
+ * 	Server creates a TMap between NetId and PlayerSaveGame
  *
- * 	Players logging in will try to get theirs and store in their player state, a no entry will use default spawning behaviour (no items, randomized APlayerStart location)
+ * 	Players on login will try get their save data, and no entry will use default spawning behaviour (no items, randomized APlayerStart location)
  */
 
 UCLASS()
