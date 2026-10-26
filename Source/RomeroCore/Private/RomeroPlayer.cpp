@@ -9,6 +9,8 @@ ARomeroPlayer::ARomeroPlayer()
 	bReplicates = true;
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
+	BuildComponent = CreateDefaultSubobject<UBuildableComponent>(TEXT("BuildComponent"));
+
 	PlayerNameText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("PlayerName"));
 
 	HeldWeapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeldWeapon"));

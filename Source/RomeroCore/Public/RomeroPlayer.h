@@ -8,6 +8,7 @@
 
 #include "Inventory/InventoryComponent.h"
 #include "Weapon/WeaponComponent.h"
+#include "Buildable/BuildableComponent.h"
 
 #include "RomeroPlayer.generated.h"
 
@@ -28,6 +29,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	TObjectPtr<UTextRenderComponent> PlayerNameText;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	TObjectPtr<UBuildableComponent> BuildComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	TObjectPtr<UStaticMeshComponent> HeldWeapon;

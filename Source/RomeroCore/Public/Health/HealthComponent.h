@@ -32,6 +32,9 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category="Health")
 	void Server_Kill();
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+
 private:
 
 	UFUNCTION()

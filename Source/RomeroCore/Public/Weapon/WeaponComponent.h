@@ -9,7 +9,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponChangedSignature, UWeapon*, Weapon);
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class UWeaponComponent : public UActorComponent
 {
 	GENERATED_BODY()

@@ -13,7 +13,7 @@ class UItemData : public UPrimaryDataAsset
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item")
-	FText ItemName;
+	FText ItemName = FText::FromString(this->GetName());
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item")
 	FText ItemDescription;
