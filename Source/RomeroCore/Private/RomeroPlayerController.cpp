@@ -2,6 +2,7 @@
 #include "RomeroGameState.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "EnhancedInputSubsystems.h"
 
 void ARomeroPlayerController::BeginPlay()
 {
@@ -75,4 +76,33 @@ void ARomeroPlayerController::Server_SendChatMessage_Implementation(const FChatM
 	}
 
 	GS->Server_SendChatMessage(Message);
+}
+
+
+void ARomeroPlayerController::EnterCar_Implementation()
+{
+	if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+		{
+			InputSystem->AddMappingContext(CarMapping.LoadSynchronous(), 0);
+			InputSystem->RemoveMappingContext(FirstPersonMapping.LoadSynchronous());
+		}
+	}
+
+	FlushPressedKeys();
+}
+
+void ARomeroPlayerController::ExitCar_Implementation()
+{
+	if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+		{
+			InputSystem->AddMappingContext(FirstPersonMapping.LoadSynchronous(), 0);
+			InputSystem->RemoveMappingContext(CarMapping.LoadSynchronous());
+		}
+	}
+
+	FlushPressedKeys();
 }

@@ -5,6 +5,8 @@
 
 #include "Blueprint/UserWidget.h"
 
+#include "InputMappingContext.h"
+
 #include "OnlineSubsystem.h"
 #include "VoiceModule.h"
 #include "Interfaces/VoiceInterface.h"
@@ -13,12 +15,23 @@
 
 #include "RomeroPlayerController.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnVehicleModeChangedSignature);
+
 UCLASS()
 class ARomeroPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
 public:
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, BlueprintReadWrite, Category="Vehicles")
+	FOnVehicleModeChangedSignature OnVehicleModeChanged;
+
+	UPROPERTY(EditAnywhere, Category="Input")
+	TSoftObjectPtr<UInputMappingContext> FirstPersonMapping;
+
+	UPROPERTY(EditAnywhere, Category="Input")
+	TSoftObjectPtr<UInputMappingContext> CarMapping;
 
 	virtual void BeginPlay() override;
 	virtual void BeginPlayingState() override;
@@ -39,4 +52,10 @@ public:
 
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category="Text Chat")
 	void Server_SendChatMessage(const FChatMessage& Message);	
+
+	UFUNCTION(Client, Reliable, BlueprintCallable, Category="Vehicles")
+	void EnterCar();
+
+	UFUNCTION(Client, Reliable, BlueprintCallable, Category="Vehicles")
+	void ExitCar();
 };
