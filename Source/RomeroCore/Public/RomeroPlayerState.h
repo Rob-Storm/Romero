@@ -12,6 +12,12 @@ class ARomeroPlayerState : public APlayerState
 
 public:
 
+	UFUNCTION(BlueprintNativeEvent)
+	void SavePlayerState(class UServerSaveGame* SaveObject);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void LoadPlayerState(class UServerSaveGame* SaveObject);
+
 	virtual void PostInitializeComponents() override;
 	
 };

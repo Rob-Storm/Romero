@@ -20,6 +20,11 @@ void ABuildableActor::BeginPlay()
 	Super::BeginPlay();
 }
 
+void ABuildableActor::OnActorLoaded()
+{
+	OnRep_Model();
+}
+
 void ABuildableActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

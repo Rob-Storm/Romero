@@ -3,6 +3,9 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/PlayerState.h"
 
+#include "Serializeable.h"
+#include "Serialization/MemoryWriter.h"
+
 #include "ChatMessage.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -53,4 +56,38 @@ void ARomeroGameMode::SendServerMessage(const FString &Message)
 
 
 	GS->Server_SendChatMessage(serverMessage);
+}
+
+void ARomeroGameMode::ServerSerialize()
+{
+
+	CurrentSaveGame->SavedActors.Empty();
+
+	//TArray<AActor*> SerializeableActors;
+	//GetAllActorsWithInterface(this, USerializeable::StaticClass(), SerializeableActors);
+
+	for(FActorIterator It(GetWorld()); It; ++It)
+	{
+		AActor* Actor = *It;
+
+		if(Actor->IsPendingKill() || !Actor->Implements<USerializeable>())
+		{
+			continue;
+		}
+
+		FActorSaveData ActorData;
+		ActorData.ActorName = Actor->GetFName();
+		ActorData.Transform = Actor->GetActorTransform();
+
+		FMemoryWriter MemWriter(ActorData.ByteData);
+
+		FObjectAndNameAsStringProxyArchive Ar(MemWriter, true);
+		Ar.ArIsSaveGame = true;
+
+		Actor->Serialize(Ar);
+
+		CurrentSaveGame->SavedActors.Add(ActorData);
+	}
+
+	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, GetServerSaveSlot(), 0);
 }

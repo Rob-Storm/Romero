@@ -6,20 +6,45 @@
 
 #include "ServerSaveGame.generated.h"
 
-/** Data serialized by the server to maintain games across different sessions */
 
-/* Ideas for saving/loading:
- *
- * 	Server save data (player built prefabs, vehicle locations, NOT zombies or ground items) will be updated every so often
- *
- *	Player save data (logged out position, stats, inventory items, etc.) will be a USaveGame stored on the server
- *
- * 	Get FUniqueNetIdRepl to differentiate players at the connection level (this does persist between joins!)
- *
- * 	Server creates a TMap between NetId and PlayerSaveGame
- *
- * 	Players on login will try get their save data, and no entry will use default spawning behaviour (no items, randomized APlayerStart location)
- */
+USTRUCT()
+struct FActorSaveData
+{
+
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY()
+	FName ActorName;
+
+	UPROPERTY()
+	FTransform Transform;
+
+	UPROPERTY()
+	TArray<uint8> ByteData;
+}
+
+
+USTRUCT()
+struct FPlayerSaveData
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY()
+	FString PlayerId;
+
+	UPROPERTY()
+	FVector Location;
+
+	UPROPERTY()
+	FRotator Rotation;
+	
+	UPROPERTY()
+	bool IsAlive;
+};
 
 UCLASS()
 class UServerSaveGame : public USaveGame
@@ -28,6 +53,11 @@ class UServerSaveGame : public USaveGame
 
 public:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Serialization")
+	TArray<FPlayerSaveData> SavedPlayers;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Serialization")
+	TArray<AActor*> SavedActors;
 
 	
 };

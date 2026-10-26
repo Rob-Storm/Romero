@@ -7,10 +7,12 @@
 #include "Damageable.h"
 #include "Health/HealthComponent.h"
 
+#include "Serializable.h"
+
 #include "BuildableActor.generated.h"
 
 UCLASS()
-class ABuildableActor : public AActor, public IDamageable
+class ABuildableActor : public AActor, public IDamageable, public ISerializable
 {
 	GENERATED_BODY()
 
@@ -24,7 +26,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;
 
-	UPROPERTY(ReplicatedUsing = OnRep_Model, EditAnywhere, BlueprintReadWrite, Category="Components", meta = (ExposeOnSpawn="true"))
+	UPROPERTY(ReplicatedUsing = OnRep_Model, EditAnywhere, BlueprintReadWrite, Category="Components", meta = (ExposeOnSpawn="true"), SaveGame)
 	TObjectPtr<UStaticMesh> Model;
 
 	UFUNCTION()
