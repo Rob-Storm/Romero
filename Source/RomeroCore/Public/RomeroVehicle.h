@@ -10,6 +10,7 @@
 
 #include "Interactable.h"
 #include "Damageable.h"
+#include "Serializable.h"
 
 #include "RomeroVehicle.generated.h"
 
@@ -17,7 +18,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerEnterVehicleSignature, ACon
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerExitVehicleSignature, AController*, Controller);
 
 UCLASS()
-class ARomeroVehicle : public AWheeledVehiclePawn, public IInteractable, public IDamageable
+class ARomeroVehicle : public AWheeledVehiclePawn, public IInteractable, public IDamageable, public ISerializeable
 {
 	GENERATED_BODY()
 
@@ -36,6 +37,8 @@ public:
 
 	UPROPERTY(ReplicatedUsing = OnRep_OwningPlayerPawn, EditAnywhere, BlueprintReadWrite, Category="Multiplayer")
 	TObjectPtr<ARomeroPlayer> OwningPlayerPawn;
+
+	void OnActorLoaded_Implementation();
 
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category="Multiplayer")
 	void Server_EnterVehicle(ARomeroPlayer* Player);

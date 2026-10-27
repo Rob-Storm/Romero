@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 
-#include "Serializeable.generated.h"
+#include "Serializable.generated.h"
 
 UINTERFACE()
 class ROMEROCORE_API USerializeable : public UInterface

@@ -4,7 +4,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 
-#include "ServerSaveGame.h"
+#include "GameFramework/OnlineReplStructs.h"
 
 void ARomeroPlayerState::PostInitializeComponents()
 {
@@ -20,7 +20,7 @@ void ARomeroPlayerState::SavePlayerState_Implementation(UServerSaveGame* SaveObj
 
 	FPlayerSaveData SaveData;
 
-	SaveData.PlayerId = GetUniqueId().ToString();
+	SaveData.PlayerID = GetUniqueId()->ToString();
 
 	// if false, player is currently dead
 	if(APawn* MyPawn = GetPawn())
@@ -30,7 +30,7 @@ void ARomeroPlayerState::SavePlayerState_Implementation(UServerSaveGame* SaveObj
 		SaveData.IsAlive = true;
 	}
 
-	SaveObject.SavedPlayers.Add(SaveData);
+	SaveObject->SavedPlayers.Add(SaveData);
 
 }
 
@@ -44,7 +44,7 @@ void ARomeroPlayerState::LoadPlayerState_Implementation(UServerSaveGame* SaveObj
 	FPlayerSaveData* FoundData = SaveObject->GetPlayerData(this);
 	if(FoundData)
 	{
-
+		// player state stuff
 	}
 	else
 	{

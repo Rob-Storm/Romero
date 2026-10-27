@@ -12,7 +12,7 @@
 #include "BuildableActor.generated.h"
 
 UCLASS()
-class ABuildableActor : public AActor, public IDamageable, public ISerializable
+class ABuildableActor : public AActor, public IDamageable, public ISerializeable
 {
 	GENERATED_BODY()
 
@@ -31,6 +31,8 @@ public:
 
 	UFUNCTION()
 	void OnRep_Model();
+
+	virtual void OnActorLoaded_Implementation() override;
 
 protected:
 

@@ -20,7 +20,7 @@ void ABuildableActor::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ABuildableActor::OnActorLoaded()
+void ABuildableActor::OnActorLoaded_Implementation()
 {
 	OnRep_Model();
 }

@@ -7,12 +7,17 @@
 
 #include "RomeroGameMode.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSaveGameLoadedSignature, UServerSaveGame*, SaveGame);
+
 UCLASS()
 class ARomeroGameMode : public AGameMode
 {
 	GENERATED_BODY()
 
 public:
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, BlueprintReadWrite, Category="Serialization")
+	FOnSaveGameLoadedSignature OnSaveGameLoaded;
 
 	UPROPERTY()
 	TObjectPtr<UServerSaveGame> CurrentSaveGame;
@@ -23,16 +28,32 @@ public:
 		return TEXT("ServerSaveSlot");
 	}
 
+	UFUNCTION(BlueprintCallable, Category="Serialization")
+	void RequestSave()
+	{
+		ServerSerialize();
+	}
+
+	virtual void InitGame(const FString &MapName, const FString &Options, FString &ErrorMessage) override;
+
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void Logout(AController* Exiting) override;
 
+	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+
 private:
+
+	UPROPERTY()
+	FString SlotName;
 
 	UFUNCTION()
 	void ServerSerialize();
 
 	UFUNCTION()
 	void ServerDeserialize();
+
+	UFUNCTION()
+	void SetupActor(AActor* Actor, FActorSaveData SaveData);
 
 	// UFUNCTION()
 	// void ClientTryGetSave();

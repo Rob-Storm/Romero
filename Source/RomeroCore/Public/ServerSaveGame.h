@@ -16,14 +16,20 @@ struct FActorSaveData
 public:
 
 	UPROPERTY()
+	FGuid ActorID;
+
+	UPROPERTY()
 	FName ActorName;
+
+	UPROPERTY()
+	TSubclassOf<AActor> ActorClass;
 
 	UPROPERTY()
 	FTransform Transform;
 
 	UPROPERTY()
 	TArray<uint8> ByteData;
-}
+};
 
 
 USTRUCT()
@@ -34,7 +40,7 @@ struct FPlayerSaveData
 public:
 
 	UPROPERTY()
-	FString PlayerId;
+	FString PlayerID;
 
 	UPROPERTY()
 	FVector Location;
@@ -53,11 +59,12 @@ class UServerSaveGame : public USaveGame
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Serialization")
+	UPROPERTY()
 	TArray<FPlayerSaveData> SavedPlayers;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Serialization")
-	TArray<AActor*> SavedActors;
+	UPROPERTY()
+	TArray<FActorSaveData> SavedActors;
 
+	FPlayerSaveData* GetPlayerData(APlayerState* PlayerState);
 	
 };

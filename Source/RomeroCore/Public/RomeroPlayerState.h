@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
 
+#include "ServerSaveGame.h"
+
 #include "RomeroPlayerState.generated.h"
 
 UCLASS()
@@ -13,10 +15,10 @@ class ARomeroPlayerState : public APlayerState
 public:
 
 	UFUNCTION(BlueprintNativeEvent)
-	void SavePlayerState(class UServerSaveGame* SaveObject);
+	void SavePlayerState(UServerSaveGame* SaveObject);
 
 	UFUNCTION(BlueprintNativeEvent)
-	void LoadPlayerState(class UServerSaveGame* SaveObject);
+	void LoadPlayerState(UServerSaveGame* SaveObject);
 
 	virtual void PostInitializeComponents() override;
 	

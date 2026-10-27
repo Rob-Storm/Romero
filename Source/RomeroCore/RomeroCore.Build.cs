@@ -9,9 +9,9 @@ public class RomeroCore : ModuleRules
 
 		PublicDependencyModuleNames.AddRange(new string[] 
 			{ 
-				"Core", "CoreUObject", "Engine", "UMG", "AIModule", "InputCore", "EnhancedInput", "ChaosVehicles"
+				"Core", "CoreUObject", "Engine", "UMG", "AIModule",
+				"InputCore", "EnhancedInput", "ChaosVehicles", "OnlineSubsystem", 
+				"OnlineSubsystemUtils", "OnlineSubsystemNull", "Voice"
 			});
-		
-		PrivateDependencyModuleNames.AddRange(new string[] { "OnlineSubsystem", "OnlineSubsystemUtils", "OnlineSubsystemNull", "Voice" });
 	}
 }

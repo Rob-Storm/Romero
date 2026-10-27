@@ -16,6 +16,11 @@ ARomeroVehicle::ARomeroVehicle()
 	PlayerNameText->SetupAttachment(RootComponent);
 }
 
+void ARomeroVehicle::OnActorLoaded_Implementation()
+{
+    OnRep_OwningPlayerPawn();
+}
+
 void ARomeroVehicle::Server_EnterVehicle_Implementation(ARomeroPlayer* Player)
 {
     UE_LOG(LogTemp, Warning, TEXT("Attempting vehicle enter"));
