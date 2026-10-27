@@ -3,6 +3,7 @@
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/PlayerState.h"
+#include "RomeroPlayerState.h"
 
 ARomeroPlayer::ARomeroPlayer()
 {
@@ -57,6 +58,25 @@ void ARomeroPlayer::BeginPlay()
 	Super::BeginPlay();
 
 	Server_SetPlayerText();
+
+	TObjectPtr<APlayerController> PC = Cast<APlayerController>(GetOwner());
+
+	if(!PC)
+	{
+		return;
+	}
+
+	TObjectPtr<ARomeroPlayerState> PS = Cast<ARomeroPlayerState>(PC->PlayerState);
+
+	if(!PS)
+	{
+		return;
+	}
+
+	if(!PS->QuitDead)
+	{
+		SetActorTransform(PS->LastSpawnTransform, false, nullptr, ETeleportType::TeleportPhysics);
+	}
 }
 
 void ARomeroPlayer::PostInitializeComponents()

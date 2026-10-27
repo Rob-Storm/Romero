@@ -53,7 +53,7 @@ void ARomeroVehicle::Server_EnterVehicle_Implementation(ARomeroPlayer* Player)
 
     // attach old player pawn to vehicle
 
-    FAttachmentTransformRules AttachRules = FAttachmentTransformRules(EAttachmentRule::KeepRelative, false);
+    FAttachmentTransformRules AttachRules = FAttachmentTransformRules(EAttachmentRule::KeepWorld, false);
     OwningPlayerPawn->AttachToActor(this, AttachRules);
 
     OwningPlayerPawn->SetActorEnableCollision(false);

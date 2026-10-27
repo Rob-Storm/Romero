@@ -155,5 +155,8 @@
 			"Name": "ChaosModularVehicleExamples",
 			"Enabled": true
 		}
+	],
+	"TargetPlatforms": [
+		"Windows"
 	]
 }

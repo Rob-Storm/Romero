@@ -30,8 +30,9 @@ void ARomeroPlayerState::SavePlayerState_Implementation(UServerSaveGame* SaveObj
 		SaveData.IsAlive = true;
 	}
 
-	SaveObject->SavedPlayers.Add(SaveData);
+	UE_LOG(LogTemp, Warning, TEXT("Saving player data with id %s"), *SaveData.PlayerID);
 
+	SaveObject->SavedPlayers.Add(SaveData);
 }
 
 void ARomeroPlayerState::LoadPlayerState_Implementation(UServerSaveGame* SaveObject)
@@ -44,11 +45,14 @@ void ARomeroPlayerState::LoadPlayerState_Implementation(UServerSaveGame* SaveObj
 	FPlayerSaveData* FoundData = SaveObject->GetPlayerData(this);
 	if(FoundData)
 	{
-		// player state stuff
+		FTransform spawnTransform(FoundData->Rotation, FoundData->Location, FVector::OneVector);
+
+		LastSpawnTransform = spawnTransform;
+		QuitDead = !FoundData->IsAlive;
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Could not find SaveGame data for player id %i"), GetPlayerId())
+		UE_LOG(LogTemp, Warning, TEXT("Could not find SaveGame data for player id %s"), *GetUniqueId()->ToString())
 	}
 
 }

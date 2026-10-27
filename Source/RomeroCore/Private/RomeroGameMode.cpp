@@ -101,7 +101,7 @@ void ARomeroGameMode::ServerSerialize()
 
 		FActorSaveData ActorData;
 
-		ActorData.ActorID = Actor->GetActorGuid();
+		//ActorData.ActorID = Actor->GetActorGuid();
 		ActorData.ActorName = Actor->GetFName();
 		ActorData.ActorClass = Actor->GetClass();
 		ActorData.Transform = Actor->GetActorTransform();
@@ -151,7 +151,7 @@ void ARomeroGameMode::ServerDeserialize()
 
 			for(int32 i = 0; i < CurrentSaveGame->SavedActors.Num(); i++)
 			{
-				if (CurrentSaveGame->SavedActors[i].ActorID == Actor->GetActorGuid())
+				if (CurrentSaveGame->SavedActors[i].ActorName == Actor->GetFName())
 			  	{
 			  		// the last parameter is very important for vehicles and other physics simulated actors!
 					Actor->SetActorTransform(CurrentSaveGame->SavedActors[i].Transform, false, nullptr, ETeleportType::TeleportPhysics);

@@ -14,6 +14,12 @@ class ARomeroPlayerState : public APlayerState
 
 public:
 
+	UPROPERTY()
+	FTransform LastSpawnTransform;
+
+	UPROPERTY()
+	bool QuitDead = true;
+
 	UFUNCTION(BlueprintNativeEvent)
 	void SavePlayerState(UServerSaveGame* SaveObject);
 
