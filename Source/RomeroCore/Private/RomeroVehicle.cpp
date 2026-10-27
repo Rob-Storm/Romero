@@ -75,17 +75,25 @@ void ARomeroVehicle::Server_ExitVehicle_Implementation()
         return;
     }
 
+    // detach old player pawn from vehicle
+    OwningPlayerPawn->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
+    // keep yaw rotation but reset others if the car flips
+    FRotator DetatchRotation = OwningPlayerPawn->GetActorRotation();
+    DetatchRotation.Pitch = 0.0f;
+    DetatchRotation.Roll = 0.0f;
+
+    OwningPlayerPawn->SetActorRotation(DetatchRotation, ETeleportType::TeleportPhysics);
+
+    OwningPlayerPawn->SetActorEnableCollision(true);
+    OwningPlayerPawn->SetActorHiddenInGame(false);
+
     // stop controlling the vehicle 
     // and switch to their human character
     PC->UnPossess();
     PC->Possess(OwningPlayerPawn);
 
     PC->ExitCar();
-
-    // detach old player pawn from vehicle
-    OwningPlayerPawn->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-    OwningPlayerPawn->SetActorEnableCollision(true);
-    OwningPlayerPawn->SetActorHiddenInGame(false);
 
     OwningPlayerPawn = nullptr;
     OnRep_OwningPlayerPawn();
