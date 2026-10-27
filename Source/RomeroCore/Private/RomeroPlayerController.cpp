@@ -32,6 +32,16 @@ void ARomeroPlayerController::BeginPlayingState()
 
 }
 
+void ARomeroPlayerController::OnUnPossess()
+{
+	UnpossessTransform = GetPawn()->GetActorTransform();
+
+	UE_LOG(LogTemp, Warning, TEXT("Pawn valid: %s"), GetPawn() ? TEXT("YES") : TEXT("NO"));
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *UnpossessTransform.ToString());
+
+	Super::OnUnPossess();
+}
+
 void ARomeroPlayerController::BeginVoiceChat()
 {
 	/*

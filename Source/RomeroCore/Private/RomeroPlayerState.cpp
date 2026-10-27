@@ -1,4 +1,5 @@
 #include "RomeroPlayerState.h"
+#include "Net/UnrealNetwork.h"
 #include "RomeroGameInstance.h"
 
 #include "GameFramework/GameModeBase.h"
@@ -11,29 +12,45 @@ void ARomeroPlayerState::PostInitializeComponents()
 	Super::PostInitializeComponents();
 }
 
+
 void ARomeroPlayerState::SavePlayerState_Implementation(UServerSaveGame* SaveObject)
 {
-	if(!SaveObject)
-	{
-		return;
-	}
+    if (!SaveObject)
+    {
+        return;
+    }
 
-	FPlayerSaveData SaveData;
+    FPlayerSaveData SaveData;
 
-	SaveData.PlayerID = GetUniqueId()->ToString();
+    if (!GetUniqueId().IsValid())
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Cannot save player: unique ID is invalid."));
+        return;
+    }
 
-	// if false, player is currently dead
-	if(APawn* MyPawn = GetPawn())
-	{
-		SaveData.Location = MyPawn->GetActorLocation();
-		SaveData.Rotation = MyPawn->GetActorRotation();
-		SaveData.IsAlive = true;
-	}
+	SaveData.LastTransform = LastSpawnTransform;
+	SaveData.IsAlive = true;
 
-	UE_LOG(LogTemp, Warning, TEXT("Saving player data with id %s"), *SaveData.PlayerID);
+    SaveData.PlayerID = GetUniqueId()->ToString();
 
-	SaveObject->SavedPlayers.Add(SaveData);
+
+    FPlayerSaveData* ExistingData = SaveObject->SavedPlayers.FindByPredicate
+	(
+		[&SaveData](const FPlayerSaveData& Data){ return Data.PlayerID == SaveData.PlayerID;}
+	);
+
+    if (ExistingData)
+    {
+        *ExistingData = SaveData;
+    }
+    else
+    {
+        SaveObject->SavedPlayers.Add(SaveData);
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("Saved player data for ID %s"), *SaveData.PlayerID);
 }
+
 
 void ARomeroPlayerState::LoadPlayerState_Implementation(UServerSaveGame* SaveObject)
 {
@@ -45,10 +62,16 @@ void ARomeroPlayerState::LoadPlayerState_Implementation(UServerSaveGame* SaveObj
 	FPlayerSaveData* FoundData = SaveObject->GetPlayerData(this);
 	if(FoundData)
 	{
-		FTransform spawnTransform(FoundData->Rotation, FoundData->Location, FVector::OneVector);
+		UE_LOG(LogTemp, Warning, TEXT("Successfully loaded SaveGame data for player id %s"), *GetUniqueId()->ToString())
 
-		LastSpawnTransform = spawnTransform;
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *FoundData->LastTransform.ToString());
+
+		LastSpawnTransform = FoundData->LastTransform;
+
 		QuitDead = !FoundData->IsAlive;
+
+		UE_LOG(LogTemp, Warning, TEXT("QuitDead %s"), QuitDead ? TEXT("TRUE") : TEXT("FALSE"));
+
 	}
 	else
 	{

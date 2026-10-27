@@ -58,25 +58,6 @@ void ARomeroPlayer::BeginPlay()
 	Super::BeginPlay();
 
 	Server_SetPlayerText();
-
-	TObjectPtr<APlayerController> PC = Cast<APlayerController>(GetOwner());
-
-	if(!PC)
-	{
-		return;
-	}
-
-	TObjectPtr<ARomeroPlayerState> PS = Cast<ARomeroPlayerState>(PC->PlayerState);
-
-	if(!PS)
-	{
-		return;
-	}
-
-	if(!PS->QuitDead)
-	{
-		SetActorTransform(PS->LastSpawnTransform, false, nullptr, ETeleportType::TeleportPhysics);
-	}
 }
 
 void ARomeroPlayer::PostInitializeComponents()

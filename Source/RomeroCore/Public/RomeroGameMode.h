@@ -37,6 +37,7 @@ public:
 	virtual void InitGame(const FString &MapName, const FString &Options, FString &ErrorMessage) override;
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
+	virtual void RestartPlayer(AController* NewPlayer) override;
 	virtual void Logout(AController* Exiting) override;
 
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;

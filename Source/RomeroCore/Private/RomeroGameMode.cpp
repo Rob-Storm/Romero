@@ -1,6 +1,7 @@
 #include "RomeroGameMode.h"
 #include "RomeroGameState.h"
 #include "RomeroPlayerState.h"
+#include "RomeroPlayerController.h"
 
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/PlayerState.h"
@@ -25,15 +26,64 @@ void ARomeroGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 
-	if(TObjectPtr<APlayerState> PS = NewPlayer->GetPlayerState<APlayerState>())
+	if(TObjectPtr<ARomeroPlayerState> PS = NewPlayer->GetPlayerState<ARomeroPlayerState>())
 	{
 		SendServerMessage(PS->GetPlayerName() + TEXT(" has joined"));
+		PS->LoadPlayerState(CurrentSaveGame);
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Player state not valid at postlogin"));
+}
+
+void ARomeroGameMode::RestartPlayer(AController* NewPlayer)
+{
+	 Super::RestartPlayer(NewPlayer);
+
+	if(TObjectPtr<ARomeroPlayerState> PS = NewPlayer->GetPlayerState<ARomeroPlayerState>())
+	{
+		if(PS->QuitDead)
+		{
+			// use normal spawn rules because
+			// the player died then left the game
+			return;
+		}
+
+		APawn* Pawn = NewPlayer->GetPawn();
+
+		if(Pawn)
+		{
+			Pawn->SetActorTransform(PS->LastSpawnTransform, false, nullptr, ETeleportType::TeleportPhysics);
+		}
 	}
 }
 
 void ARomeroGameMode::Logout(AController* Exiting)
 {
-	Super::Logout(Exiting);
+  	if (ARomeroPlayerController* PC = Cast<ARomeroPlayerController>(Exiting))
+    {
+        if (ARomeroPlayerState* PS = PC->GetPlayerState<ARomeroPlayerState>())
+        {
+            if (!CurrentSaveGame)
+            {
+                CurrentSaveGame = Cast<UServerSaveGame>
+                (
+                	UGameplayStatics::CreateSaveGameObject(UServerSaveGame::StaticClass())
+                );
+            }
+
+            if (CurrentSaveGame)
+            {
+            	PS->LastSpawnTransform = PC->UnpossessTransform;
+
+                PS->SavePlayerState(CurrentSaveGame);
+
+                const bool bSaved = UGameplayStatics::SaveGameToSlot(CurrentSaveGame, GetServerSaveSlot(), 0);
+
+                UE_LOG(LogTemp, Log, TEXT("Player save on logout: %s"), bSaved ? TEXT("Success") : TEXT("Failed"));
+            }
+        }
+    }
 
 	// trying to create UI while the world
 	// is being 'torn down' will cause a crash
@@ -49,16 +99,12 @@ void ARomeroGameMode::Logout(AController* Exiting)
 			SendServerMessage(PS->GetPlayerName() + TEXT(" has left"));
 		}
 	}
+
+	Super::Logout(Exiting);
 }
 
 void ARomeroGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
 {
-
-	ARomeroPlayerState* PS = NewPlayer->GetPlayerState<ARomeroPlayerState>();
-	if(ensure(PS))
-	{
-		PS->LoadPlayerState(CurrentSaveGame);
-	}
 
 	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 }

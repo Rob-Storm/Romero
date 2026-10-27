@@ -14,10 +14,10 @@ class ARomeroPlayerState : public APlayerState
 
 public:
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Serialization")
 	FTransform LastSpawnTransform;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Serialization")
 	bool QuitDead = true;
 
 	UFUNCTION(BlueprintNativeEvent)

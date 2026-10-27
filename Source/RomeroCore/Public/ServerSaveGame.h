@@ -43,10 +43,7 @@ public:
 	FString PlayerID;
 
 	UPROPERTY()
-	FVector Location;
-
-	UPROPERTY()
-	FRotator Rotation;
+	FTransform LastTransform;
 	
 	UPROPERTY()
 	bool IsAlive;

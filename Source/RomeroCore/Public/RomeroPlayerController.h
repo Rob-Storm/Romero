@@ -33,8 +33,13 @@ public:
 	UPROPERTY(EditAnywhere, Category="Input")
 	TSoftObjectPtr<UInputMappingContext> CarMapping;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Pawn")
+	FTransform UnpossessTransform;
+
 	virtual void BeginPlay() override;
 	virtual void BeginPlayingState() override;
+
+	virtual void OnUnPossess() override;
 
 	IOnlineVoicePtr VoiceInterface;
 
