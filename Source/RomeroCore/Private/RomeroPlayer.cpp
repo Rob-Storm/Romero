@@ -64,7 +64,8 @@ void ARomeroPlayer::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	WeaponComponent->OnWeaponChanged.AddDynamic(this, &ARomeroPlayer::HandleWeaponChanged);
+	//WeaponComponent->OnWeaponChanged.AddDynamic(this, &ARomeroPlayer::HandleWeaponChanged);
+	// ^^ Todo: replace with the generic item version
 }
 
 void ARomeroPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

@@ -1,4 +1,5 @@
 #include "Buildable/BuildableComponent.h"
+#include "Buildable/Buildable.h"
 #include "Buildable/BuildableActor.h"
 #include "Buildable/BuildableData.h"
 #include "Net/UnrealNetwork.h"
@@ -8,15 +9,9 @@ UBuildableComponent::UBuildableComponent()
 	SetIsReplicatedByDefault(true);
 }
 
-void UBuildableComponent::Server_SetBuildable_Implementation(UBuildable* Buildable)
+void UBuildableComponent::Server_Build_Implementation(const FTransform& Transform, UBuildableData* Data)
 {
-	EquippedBuildable = Buildable;
-	OnRep_EquippedBuildable();
-}
-
-void UBuildableComponent::Server_Build_Implementation(const FTransform& Transform)
-{
-    if (!EquippedBuildable)
+    if (!Data)
     {
         return;
     }
@@ -28,7 +23,7 @@ void UBuildableComponent::Server_Build_Implementation(const FTransform& Transfor
     	GetOwner()
     );
 
-    BuildableActor->Model = EquippedBuildable->GetBuildableData()->BuildableModel;
+    BuildableActor->Model = Data->BuildableModel;
     BuildableActor->OnRep_Model();
     
     if (!BuildableActor)
@@ -38,20 +33,8 @@ void UBuildableComponent::Server_Build_Implementation(const FTransform& Transfor
     }
 
     UE_LOG(LogTemp, Warning, TEXT("Server_Build: ABuildableActor static mesh {%s}"), 
-    	*GetNameSafe(EquippedBuildable->GetBuildableData()->BuildableModel));
+        *GetNameSafe(Data->BuildableModel));
 
     BuildableActor->FinishSpawning(Transform);
 
-}
-
-void UBuildableComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(UBuildableComponent, EquippedBuildable);
-}
-
-void UBuildableComponent::OnRep_EquippedBuildable()
-{
-	OnBuildableChanged.Broadcast(EquippedBuildable);
 }

@@ -15,10 +15,10 @@ class UWeapon : public UItem
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon State")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category="Weapon State")
 	int32 CurrentAmmo;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Weapon State")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category="Weapon State")
 	bool ShootDelayActive;
 
 	UFUNCTION(BlueprintPure, BlueprintCallable, Category="Weapon State")
@@ -32,5 +32,7 @@ public:
 	{
 		return Cast<UWeaponData>(ItemData);
 	}
+
+	virtual void Server_UseItem_Implementation(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode) override;
 	
 };

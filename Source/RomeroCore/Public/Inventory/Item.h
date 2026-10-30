@@ -7,7 +7,17 @@
 
 #include "Item.generated.h"
 
-/** Item representation in inventory */
+class ARomeroPlayer;
+
+UENUM(BlueprintType)
+enum EItemUseMode
+{
+	Primary, // left click
+	Secondary, // right click
+	Tertiary // other, R or another key
+};
+
+/** Runtime representation of an inventory item  */
 
 UCLASS(Blueprintable, BlueprintType)
 class UItem : public UObject
@@ -18,6 +28,14 @@ public:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UItemData> ItemData;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category="RomeroCore")
+	int32 CurrentStackCount = 1;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Item")
+	void Server_UseItem(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode);
+
+	virtual void Server_UseItem_Implementation(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode);
 
 	UFUNCTION(BlueprintPure, BlueprintCallable,Category="Item")
 	UItemData* GetItemData() const
