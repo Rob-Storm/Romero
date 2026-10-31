@@ -18,9 +18,9 @@ public:
 	UWeaponComponent();
 
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category="Weapon")
-	void Server_WeaponTrace();
+	void Server_Shoot(class UWeaponData* WeaponData);
 
-	UFUNCTION(Server, Reliable, BlueprintCallable, Category="Weapon")
-	void Server_Shoot();
+	UFUNCTION()
+	bool ShootTrace(float Range, FHitResult &OutHitResult);
 	
 };

@@ -7,7 +7,7 @@ void UWeapon::UseItem_Implementation(ARomeroPlayer* OwningPlayer, EItemUseMode U
 {
 	TObjectPtr<UWeaponComponent> WeaponComponent = OwningPlayer->WeaponComponent;
 
-	WeaponComponent->Server_Shoot();
+	WeaponComponent->Server_Shoot(GetWeaponData());
 }
 
 void UWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
