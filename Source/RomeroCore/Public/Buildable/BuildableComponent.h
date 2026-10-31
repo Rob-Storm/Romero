@@ -23,11 +23,11 @@ public:
 
 	/** Material used when a buildable can be placed */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="BuildableComponent")
-	TObjectPtr<UMaterial> BuildableMaterialGood;
+	TObjectPtr<UMaterialInterface> BuildableMaterialGood;
 
 	/** Material used when a buildable CAN'T be placed */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="BuildableComponent")
-	TObjectPtr<UMaterial> BuildableMaterialBad;
+	TObjectPtr<UMaterialInterface> BuildableMaterialBad;
 
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category="BuildableComponent")
 	void Server_Build(const FTransform& Transform, UBuildableData* Data);	

@@ -122,7 +122,6 @@ void UInventoryComponent::Server_UseEquippedItem_Implementation(EItemUseMode Use
 		if(EquippedItem->CurrentStackCount <= 0)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Last count of equipped item used, removing"));
-			Server_EquipItem(nullptr);
 			Server_RemoveItem(EquippedItem);
 		}
 	}
