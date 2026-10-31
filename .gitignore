@@ -1,11 +1,13 @@
 Automation
 Binaries
+Build
 DerivedDataCache
 Intermediate
 Saved
 .vscode
 .vs
 *.VC.db
+*.bat
 *.opensdf
 *.opendb
 *.sdf
