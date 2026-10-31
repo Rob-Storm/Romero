@@ -33,6 +33,6 @@ public:
 		return Cast<UWeaponData>(ItemData);
 	}
 
-	virtual void Server_UseItem_Implementation(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode) override;
+	virtual void UseItem_Implementation(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode) override;
 	
 };

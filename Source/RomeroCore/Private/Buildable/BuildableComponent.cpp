@@ -8,15 +8,21 @@
 #include "Net/UnrealNetwork.h"
 #include "Camera/CameraComponent.h"
 
+#include "Camera/PlayerCameraManager.h"
+#include "GameFramework/PlayerController.h"
+
 UBuildableComponent::UBuildableComponent()
 {
 	SetIsReplicatedByDefault(true);
 }
 
-void UBuildableComponent::Server_Build_Implementation(const FTransform& Transform, UBuildableData* Data)
+void UBuildableComponent::Build_Implementation(const FTransform& Transform, UBuildableData* Data)
 {
+    UE_LOG(LogTemp, Warning, TEXT("Server_Build executed. Authority: %d"), GetOwner()->HasAuthority());
+
     if (!Data)
     {
+        UE_LOG(LogTemp, Warning, TEXT("Server_Build: buildable data invalid"));
         return;
     }
 
@@ -102,12 +108,24 @@ bool UBuildableComponent::BuildingTrace(float Range, FHitResult &OutHitResult, F
         return false;
     }
 
-    TObjectPtr<UCameraComponent> PlayerCamera = Pawn->Camera;
-
-    StartLocation = PlayerCamera->GetComponentLocation();
-    EndLocation = StartLocation + (PlayerCamera->GetForwardVector() * Range);
-
-    CameraRotation = PlayerCamera->GetComponentRotation();
+    APlayerController* PC = Cast<APlayerController>(Pawn->GetController());
+    
+    if(!PC)
+    {
+        return false;
+    }
+    
+    APlayerCameraManager* CameraManager = PC->PlayerCameraManager;
+    
+    if(!CameraManager)
+    {
+        return false;
+    }
+    
+    StartLocation = CameraManager->GetCameraLocation();
+    CameraRotation = CameraManager->GetCameraRotation();
+    
+    EndLocation = StartLocation + (CameraRotation.Vector() * Range);
 
     GetWorld()->LineTraceSingleByChannel(Result, StartLocation, EndLocation, ECollisionChannel::ECC_Visibility, QueryParams, ResponseParams);
 

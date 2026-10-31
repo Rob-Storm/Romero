@@ -113,7 +113,7 @@ void UInventoryComponent::Server_UseEquippedItem_Implementation(EItemUseMode Use
 		return;
 	}
 
-	EquippedItem->Server_UseItem(Pawn, UseMode);
+	EquippedItem->UseItem(Pawn, UseMode);
 
 	if(EquippedItem->GetItemData()->CanStack)
 	{

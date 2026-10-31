@@ -20,5 +20,5 @@ public:
 		return Cast<UBuildableData>(ItemData);
 	}
 
-	virtual void Server_UseItem_Implementation(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode) override;
+	virtual void UseItem_Implementation(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode) override;
 };

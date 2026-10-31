@@ -33,9 +33,9 @@ public:
 	int32 CurrentStackCount = 1;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Item")
-	void Server_UseItem(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode);
+	void UseItem(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode);
 
-	virtual void Server_UseItem_Implementation(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode);
+	virtual void UseItem_Implementation(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode);
 
 	UFUNCTION(BlueprintPure, BlueprintCallable,Category="Item")
 	UItemData* GetItemData() const

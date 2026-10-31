@@ -2,8 +2,12 @@
 #include "Buildable/BuildableComponent.h"
 #include "RomeroPlayer.h"
 
-void UBuildable::Server_UseItem_Implementation(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode)
+void UBuildable::UseItem_Implementation(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode)
 {
+    // make sure you call the _Implementation version!
+    // you will get an infinite loop otherwise
+    Super::UseItem_Implementation(OwningPlayer, UseMode);
+
 	TObjectPtr<UBuildableComponent> BuildableComponent = OwningPlayer->BuildComponent;
 
 	FHitResult Result;
@@ -13,6 +17,6 @@ void UBuildable::Server_UseItem_Implementation(ARomeroPlayer* OwningPlayer, EIte
     {
     	FRotator SpawnRotation(0.f, CameraRotation.Yaw, 0.f);
     	FTransform SpawnTransform(SpawnRotation.Quaternion(), Result.ImpactPoint, FVector::OneVector);
-    	BuildableComponent->Server_Build(SpawnTransform, GetBuildableData());
+    	BuildableComponent->Build(SpawnTransform, GetBuildableData());
     }
 }

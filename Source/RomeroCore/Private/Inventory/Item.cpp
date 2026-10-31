@@ -3,7 +3,7 @@
 #include "RomeroPlayer.h"
 #include "GameFramework/PlayerState.h"
 
-void UItem::Server_UseItem_Implementation(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode)
+void UItem::UseItem_Implementation(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode)
 {
 	TObjectPtr<APlayerState> PS = OwningPlayer->GetController()->PlayerState;
 

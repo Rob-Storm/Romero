@@ -3,7 +3,7 @@
 #include "RomeroPlayer.h"
 #include "Weapon/WeaponComponent.h"
 
-void UWeapon::Server_UseItem_Implementation(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode)
+void UWeapon::UseItem_Implementation(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode)
 {
 	TObjectPtr<UWeaponComponent> WeaponComponent = OwningPlayer->WeaponComponent;
 

@@ -37,14 +37,16 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	TObjectPtr<UBuildableComponent> BuildComponent;
 
+	/** Only the owner can see this */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-	TObjectPtr<UStaticMeshComponent> HeldWeapon;
+	TObjectPtr<UStaticMeshComponent> FirstPersonItem;
+
+	/** Owner cannot see this mesh */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	TObjectPtr<UStaticMeshComponent> ThirdPersonItem;
 
 	UPROPERTY(ReplicatedUsing = OnRep_SetPawnName, EditAnywhere, BlueprintReadWrite, Category="RomeroCore")
 	FString PawnName;
-
-	UFUNCTION(BlueprintCallable, Category="Weapon")
-	void HandleWeaponChanged(UWeapon* Weapon);
 
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category="RomeroCore")
 	void Server_SetPlayerText();
@@ -58,5 +60,8 @@ private:
 
 	UFUNCTION()
 	void OnRep_SetPawnName();
+
+	UFUNCTION()
+	void HandleItemChanged(UItem* EquippedItem);
 	
 };

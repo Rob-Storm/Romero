@@ -14,26 +14,16 @@ ARomeroPlayer::ARomeroPlayer()
 
 	PlayerNameText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("PlayerName"));
 
-	HeldWeapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeldWeapon"));
+	FirstPersonItem = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FirstPersonItem"));
+	ThirdPersonItem = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ThirdPersonItem"));
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 
-	HeldWeapon->SetupAttachment(GetMesh(), FName(TEXT("WeaponSocket")));
 	PlayerNameText->SetupAttachment(RootComponent);
 	Camera->SetupAttachment(RootComponent);
-}
 
-void ARomeroPlayer::HandleWeaponChanged(UWeapon* Weapon)
-{
-	if(!Weapon)
-	{
-		HeldWeapon->SetVisibility(false);
-		return;
-	}
-
-	HeldWeapon->SetVisibility(true);
-
-	HeldWeapon->SetStaticMesh(Weapon->GetWeaponData()->WorldModel);
+	ThirdPersonItem->SetupAttachment(GetMesh(), FName(TEXT("WeaponSocket")));
+	FirstPersonItem->SetupAttachment(Camera);
 }
 
 void ARomeroPlayer::Server_SetPlayerText_Implementation()
@@ -67,8 +57,7 @@ void ARomeroPlayer::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	//WeaponComponent->OnWeaponChanged.AddDynamic(this, &ARomeroPlayer::HandleWeaponChanged);
-	// ^^ Todo: replace with the generic item version
+	InventoryComponent->OnEquippedItemChanged.AddDynamic(this, &ARomeroPlayer::HandleItemChanged);
 }
 
 void ARomeroPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -78,8 +67,20 @@ void ARomeroPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(ARomeroPlayer, PawnName);
 }
 
-
 void ARomeroPlayer::OnRep_SetPawnName()
 {
 	PlayerNameText->SetText(FText::FromString(PawnName));
+}
+
+void ARomeroPlayer::HandleItemChanged(UItem* EquippedItem)
+{
+	TObjectPtr<UStaticMesh> NewMesh = nullptr;
+
+	if(IsValid(EquippedItem))
+	{
+		NewMesh = EquippedItem->GetItemData()->WorldModel;
+	}
+
+	FirstPersonItem->SetStaticMesh(NewMesh);
+	ThirdPersonItem->SetStaticMesh(NewMesh);
 }

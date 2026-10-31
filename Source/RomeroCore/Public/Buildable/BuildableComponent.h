@@ -29,8 +29,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="BuildableComponent")
 	TObjectPtr<UMaterialInterface> BuildableMaterialBad;
 
-	UFUNCTION(Server, Reliable, BlueprintCallable, Category="BuildableComponent")
-	void Server_Build(const FTransform& Transform, UBuildableData* Data);	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="BuildableComponent")
+	void Build(const FTransform& Transform, UBuildableData* Data);	
 
 	UFUNCTION(BlueprintCallable, Category="BuildableComponent")
 	void PreviewBuilding(UBuildableData* Data);
