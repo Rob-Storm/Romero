@@ -6,6 +6,8 @@
 #include "Inventory/ItemData.h"
 #include "Inventory/ItemActor.h"
 
+#include "RomeroPlayer.h"
+
 UInventoryComponent::UInventoryComponent()
 {
 	SetIsReplicatedByDefault(true);
@@ -30,6 +32,16 @@ void UInventoryComponent::Server_AddItem_Implementation(UItemData* ItemData)
 	OnRep_ItemList();
 }
 
+void UInventoryComponent::Server_EquipItem_Implementation(UItem* Item)
+{
+	EquippedItem = Item;
+
+	FString ItemName = !EquippedItem ? TEXT("None") : EquippedItem->GetItemData()->ItemName.ToString();
+
+	UE_LOG(LogTemp, Log, TEXT("Equipped item %s"), *ItemName);
+	OnRep_EquippedItem();
+}
+
 void UInventoryComponent::Server_RemoveItem_Implementation(UItem* Item)
 {
 	if(!Item)
@@ -39,9 +51,15 @@ void UInventoryComponent::Server_RemoveItem_Implementation(UItem* Item)
 
 	int32 RemoveItemIndex = ItemList.Find(Item);
 
-	if(RemoveItemIndex == -1)
+	if(RemoveItemIndex == INDEX_NONE)
 	{
 		return;
+	}
+
+	if(Item == EquippedItem)
+	{
+		// unequip the equipped item before removing it
+		Server_EquipItem(nullptr);
 	}
 
 	ItemList.RemoveAt(RemoveItemIndex);
@@ -79,6 +97,36 @@ void UInventoryComponent::Server_SpawnItemActor_Implementation(UItem* Item)
 	SpawnedItemActor->Model->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 }
 
+void UInventoryComponent::Server_UseEquippedItem_Implementation(EItemUseMode UseMode)
+{
+	if(!EquippedItem)
+	{
+		UE_LOG(LogTemp, Log, TEXT("No equipped item"));
+		return;
+	}
+
+	TObjectPtr<ARomeroPlayer> Pawn = Cast<ARomeroPlayer>(GetOwner());
+
+	if(!Pawn)
+	{
+		UE_LOG(LogTemp, Error, TEXT("PlayerController not valid"));
+		return;
+	}
+
+	EquippedItem->UseItem(Pawn, UseMode);
+
+	if(EquippedItem->GetItemData()->CanStack)
+	{
+		EquippedItem->CurrentStackCount--;
+
+		if(EquippedItem->CurrentStackCount <= 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Last count of equipped item used, removing"));
+			Server_RemoveItem(EquippedItem);
+		}
+	}
+}
+
 bool UInventoryComponent::HasItem(UItemData* ItemType, UItem* &OutFoundItem)
 {
 	OutFoundItem = nullptr;
@@ -105,10 +153,16 @@ void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(UInventoryComponent, ItemList);
+	DOREPLIFETIME(UInventoryComponent, EquippedItem);
 }
 
 void UInventoryComponent::OnRep_ItemList()
 {
 	OnInventoryContentsChanged.Broadcast(ItemList);
 	OnInventoryChanged.Broadcast();
+}
+
+void UInventoryComponent::OnRep_EquippedItem()
+{
+	OnEquippedItemChanged.Broadcast(EquippedItem);
 }

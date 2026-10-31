@@ -2,13 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-
-#include "Buildable/Buildable.h"
+#include "Engine/StaticMeshActor.h"
 
 #include "BuildableComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBuildableChangedSignature, UBuildable*, EquippedBuildable);
-
+class UBuildableData;
 
 /** Encapsulates the ability to create new ABuildableActors */
 UCLASS(Blueprintable, BlueprintType)
@@ -20,23 +18,24 @@ public:
 
 	UBuildableComponent();
 
-	UPROPERTY(BlueprintAssignable, BlueprintCallable, BlueprintReadWrite, Category="BuildableComponent")
-	FOnBuildableChangedSignature OnBuildableChanged;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="BuildableComponent")
+	TObjectPtr<AStaticMeshActor> PreviewActor;
 
-	UPROPERTY(ReplicatedUsing = OnRep_EquippedBuildable, EditAnywhere, BlueprintReadWrite, Category="BuildableComponent")
-	TObjectPtr<UBuildable> EquippedBuildable;
+	/** Material used when a buildable can be placed */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="BuildableComponent")
+	TObjectPtr<UMaterialInterface> BuildableMaterialGood;
 
-	UFUNCTION(Server, Reliable, BlueprintCallable, Category="BuildableComponent")
-	void Server_SetBuildable(UBuildable* Buildable);
+	/** Material used when a buildable CAN'T be placed */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="BuildableComponent")
+	TObjectPtr<UMaterialInterface> BuildableMaterialBad;
 
-	UFUNCTION(Server, Reliable, BlueprintCallable, Category="BuildableComponent")
-	void Server_Build(const FTransform& Transform);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="BuildableComponent")
+	void Build(const FTransform& Transform, UBuildableData* Data);	
 
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-private:
+	UFUNCTION(BlueprintCallable, Category="BuildableComponent")
+	void PreviewBuilding(UBuildableData* Data);
 
 	UFUNCTION()
-	void OnRep_EquippedBuildable();
-	
+	bool BuildingTrace(float Range, FHitResult &OutHitResult, FRotator &CameraRotation);
+
 };

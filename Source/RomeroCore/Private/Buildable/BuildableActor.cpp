@@ -9,7 +9,6 @@ ABuildableActor::ABuildableActor()
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 
-	StaticMeshComponent->SetIsReplicated(true);
 	StaticMeshComponent->SetCanEverAffectNavigation(true);
 
 	RootComponent = StaticMeshComponent;

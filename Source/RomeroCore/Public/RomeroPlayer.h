@@ -5,6 +5,7 @@
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "Camera/CameraComponent.h"
 
 #include "Inventory/InventoryComponent.h"
 #include "Weapon/WeaponComponent.h"
@@ -22,6 +23,9 @@ public:
 	ARomeroPlayer();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	TObjectPtr<UCameraComponent> Camera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	TObjectPtr<UInventoryComponent> InventoryComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
@@ -33,14 +37,16 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	TObjectPtr<UBuildableComponent> BuildComponent;
 
+	/** Only the owner can see this */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-	TObjectPtr<UStaticMeshComponent> HeldWeapon;
+	TObjectPtr<UStaticMeshComponent> FirstPersonItem;
+
+	/** Owner cannot see this mesh */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	TObjectPtr<UStaticMeshComponent> ThirdPersonItem;
 
 	UPROPERTY(ReplicatedUsing = OnRep_SetPawnName, EditAnywhere, BlueprintReadWrite, Category="RomeroCore")
 	FString PawnName;
-
-	UFUNCTION(BlueprintCallable, Category="Weapon")
-	void HandleWeaponChanged(UWeapon* Weapon);
 
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category="RomeroCore")
 	void Server_SetPlayerText();
@@ -54,5 +60,8 @@ private:
 
 	UFUNCTION()
 	void OnRep_SetPawnName();
+
+	UFUNCTION()
+	void HandleItemChanged(UItem* EquippedItem);
 	
 };

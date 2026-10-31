@@ -1,23 +1,28 @@
 #include "Buildable/BuildableComponent.h"
+
+#include "Buildable/Buildable.h"
 #include "Buildable/BuildableActor.h"
 #include "Buildable/BuildableData.h"
+#include "RomeroPlayer.h"
+
 #include "Net/UnrealNetwork.h"
+#include "Camera/CameraComponent.h"
+
+#include "Camera/PlayerCameraManager.h"
+#include "GameFramework/PlayerController.h"
 
 UBuildableComponent::UBuildableComponent()
 {
 	SetIsReplicatedByDefault(true);
 }
 
-void UBuildableComponent::Server_SetBuildable_Implementation(UBuildable* Buildable)
+void UBuildableComponent::Build_Implementation(const FTransform& Transform, UBuildableData* Data)
 {
-	EquippedBuildable = Buildable;
-	OnRep_EquippedBuildable();
-}
+    UE_LOG(LogTemp, Warning, TEXT("Server_Build executed. Authority: %d"), GetOwner()->HasAuthority());
 
-void UBuildableComponent::Server_Build_Implementation(const FTransform& Transform)
-{
-    if (!EquippedBuildable)
+    if (!Data)
     {
+        UE_LOG(LogTemp, Warning, TEXT("Server_Build: buildable data invalid"));
         return;
     }
 
@@ -28,7 +33,12 @@ void UBuildableComponent::Server_Build_Implementation(const FTransform& Transfor
     	GetOwner()
     );
 
-    BuildableActor->Model = EquippedBuildable->GetBuildableData()->BuildableModel;
+    if(!BuildableActor)
+    {
+        return;
+    }
+
+    BuildableActor->Model = Data->BuildableModel;
     BuildableActor->OnRep_Model();
     
     if (!BuildableActor)
@@ -38,20 +48,88 @@ void UBuildableComponent::Server_Build_Implementation(const FTransform& Transfor
     }
 
     UE_LOG(LogTemp, Warning, TEXT("Server_Build: ABuildableActor static mesh {%s}"), 
-    	*GetNameSafe(EquippedBuildable->GetBuildableData()->BuildableModel));
+        *GetNameSafe(Data->BuildableModel));
 
     BuildableActor->FinishSpawning(Transform);
 
 }
 
-void UBuildableComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+void UBuildableComponent::PreviewBuilding(UBuildableData* Data)
 {
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+    FHitResult Result;
+    FRotator CameraRotation;
 
-	DOREPLIFETIME(UBuildableComponent, EquippedBuildable);
+    if(BuildingTrace(500.f, Result, CameraRotation))
+    {
+        FRotator ModelRotation(0.f, CameraRotation.Yaw, 0.f);
+
+        if(!IsValid(PreviewActor))
+        {
+            FTransform SpawnTransform(CameraRotation.Quaternion(), Result.ImpactPoint, FVector::OneVector);
+
+            PreviewActor = GetWorld()->SpawnActorDeferred<AStaticMeshActor>
+            (
+                AStaticMeshActor::StaticClass(),
+                SpawnTransform,
+                GetOwner()
+            );
+
+            PreviewActor->GetRootComponent()->SetMobility(EComponentMobility::Movable);
+            PreviewActor->SetActorEnableCollision(false);
+            PreviewActor->GetStaticMeshComponent()->SetMaterial(0, BuildableMaterialGood);
+
+            PreviewActor->FinishSpawning(SpawnTransform);
+        }
+
+        PreviewActor->SetActorLocationAndRotation(Result.ImpactPoint, ModelRotation);
+
+        PreviewActor->GetStaticMeshComponent()->SetStaticMesh(Data->BuildableModel);
+        PreviewActor->SetActorHiddenInGame(false);
+    }
+    else if(IsValid(PreviewActor))
+    {
+        PreviewActor->SetActorHiddenInGame(true);
+    }
 }
 
-void UBuildableComponent::OnRep_EquippedBuildable()
+bool UBuildableComponent::BuildingTrace(float Range, FHitResult &OutHitResult, FRotator &CameraRotation)
 {
-	OnBuildableChanged.Broadcast(EquippedBuildable);
+    FVector StartLocation;
+    FVector EndLocation;
+    FHitResult Result;
+    FCollisionQueryParams QueryParams;
+    QueryParams.AddIgnoredActor(GetOwner());
+    FCollisionResponseParams ResponseParams;
+
+    TObjectPtr<ARomeroPlayer> Pawn = Cast<ARomeroPlayer>(GetOwner());
+
+    if(!Pawn)
+    {
+        return false;
+    }
+
+    APlayerController* PC = Cast<APlayerController>(Pawn->GetController());
+    
+    if(!PC)
+    {
+        return false;
+    }
+    
+    APlayerCameraManager* CameraManager = PC->PlayerCameraManager;
+    
+    if(!CameraManager)
+    {
+        return false;
+    }
+    
+    StartLocation = CameraManager->GetCameraLocation();
+    CameraRotation = CameraManager->GetCameraRotation();
+    
+    EndLocation = StartLocation + (CameraRotation.Vector() * Range);
+
+    GetWorld()->LineTraceSingleByChannel(Result, StartLocation, EndLocation, ECollisionChannel::ECC_Visibility, QueryParams, ResponseParams);
+
+    OutHitResult = Result;
+
+    return Result.bBlockingHit;
 }
