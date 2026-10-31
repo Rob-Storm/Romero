@@ -51,9 +51,15 @@ void UInventoryComponent::Server_RemoveItem_Implementation(UItem* Item)
 
 	int32 RemoveItemIndex = ItemList.Find(Item);
 
-	if(RemoveItemIndex == -1)
+	if(RemoveItemIndex == INDEX_NONE)
 	{
 		return;
+	}
+
+	if(Item == EquippedItem)
+	{
+		// unequip the equipped item before removing it
+		Server_EquipItem(nullptr);
 	}
 
 	ItemList.RemoveAt(RemoveItemIndex);

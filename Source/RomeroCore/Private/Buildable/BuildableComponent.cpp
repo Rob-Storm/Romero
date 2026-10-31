@@ -1,8 +1,12 @@
 #include "Buildable/BuildableComponent.h"
+
 #include "Buildable/Buildable.h"
 #include "Buildable/BuildableActor.h"
 #include "Buildable/BuildableData.h"
+#include "RomeroPlayer.h"
+
 #include "Net/UnrealNetwork.h"
+#include "Camera/CameraComponent.h"
 
 UBuildableComponent::UBuildableComponent()
 {
@@ -23,6 +27,11 @@ void UBuildableComponent::Server_Build_Implementation(const FTransform& Transfor
     	GetOwner()
     );
 
+    if(!BuildableActor)
+    {
+        return;
+    }
+
     BuildableActor->Model = Data->BuildableModel;
     BuildableActor->OnRep_Model();
     
@@ -37,4 +46,72 @@ void UBuildableComponent::Server_Build_Implementation(const FTransform& Transfor
 
     BuildableActor->FinishSpawning(Transform);
 
+}
+
+void UBuildableComponent::PreviewBuilding(UBuildableData* Data)
+{
+    FHitResult Result;
+    FRotator CameraRotation;
+
+    if(BuildingTrace(500.f, Result, CameraRotation))
+    {
+        FRotator ModelRotation(0.f, CameraRotation.Yaw, 0.f);
+
+        if(!IsValid(PreviewActor))
+        {
+            FTransform SpawnTransform(CameraRotation.Quaternion(), Result.ImpactPoint, FVector::OneVector);
+
+            PreviewActor = GetWorld()->SpawnActorDeferred<AStaticMeshActor>
+            (
+                AStaticMeshActor::StaticClass(),
+                SpawnTransform,
+                GetOwner()
+            );
+
+            PreviewActor->GetRootComponent()->SetMobility(EComponentMobility::Movable);
+            PreviewActor->SetActorEnableCollision(false);
+            PreviewActor->GetStaticMeshComponent()->SetMaterial(0, BuildableMaterialGood);
+
+            PreviewActor->FinishSpawning(SpawnTransform);
+        }
+
+        PreviewActor->SetActorLocationAndRotation(Result.ImpactPoint, ModelRotation);
+
+        PreviewActor->GetStaticMeshComponent()->SetStaticMesh(Data->BuildableModel);
+        PreviewActor->SetActorHiddenInGame(false);
+    }
+    else if(IsValid(PreviewActor))
+    {
+        PreviewActor->SetActorHiddenInGame(true);
+    }
+}
+
+bool UBuildableComponent::BuildingTrace(float Range, FHitResult &OutHitResult, FRotator &CameraRotation)
+{
+    FVector StartLocation;
+    FVector EndLocation;
+    FHitResult Result;
+    FCollisionQueryParams QueryParams;
+    QueryParams.AddIgnoredActor(GetOwner());
+    FCollisionResponseParams ResponseParams;
+
+    TObjectPtr<ARomeroPlayer> Pawn = Cast<ARomeroPlayer>(GetOwner());
+
+    if(!Pawn)
+    {
+        return false;
+    }
+
+    TObjectPtr<UCameraComponent> PlayerCamera = Pawn->Camera;
+
+    StartLocation = PlayerCamera->GetComponentLocation();
+    EndLocation = StartLocation + (PlayerCamera->GetForwardVector() * Range);
+
+    CameraRotation = PlayerCamera->GetComponentRotation();
+
+    GetWorld()->LineTraceSingleByChannel(Result, StartLocation, EndLocation, ECollisionChannel::ECC_Visibility, QueryParams, ResponseParams);
+
+    OutHitResult = Result;
+
+    return Result.bBlockingHit;
 }

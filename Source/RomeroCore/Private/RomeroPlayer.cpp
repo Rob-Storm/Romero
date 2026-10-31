@@ -16,8 +16,11 @@ ARomeroPlayer::ARomeroPlayer()
 
 	HeldWeapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeldWeapon"));
 
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+
 	HeldWeapon->SetupAttachment(GetMesh(), FName(TEXT("WeaponSocket")));
 	PlayerNameText->SetupAttachment(RootComponent);
+	Camera->SetupAttachment(RootComponent);
 }
 
 void ARomeroPlayer::HandleWeaponChanged(UWeapon* Weapon)

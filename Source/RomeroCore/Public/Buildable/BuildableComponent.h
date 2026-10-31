@@ -2,8 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Engine/StaticMeshActor.h"
 
 #include "BuildableComponent.generated.h"
+
+class UBuildableData;
 
 /** Encapsulates the ability to create new ABuildableActors */
 UCLASS(Blueprintable, BlueprintType)
@@ -15,9 +18,24 @@ public:
 
 	UBuildableComponent();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="RomeroCore")
-	int32 SomeProperty;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="BuildableComponent")
+	TObjectPtr<AStaticMeshActor> PreviewActor;
+
+	/** Material used when a buildable can be placed */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="BuildableComponent")
+	TObjectPtr<UMaterial> BuildableMaterialGood;
+
+	/** Material used when a buildable CAN'T be placed */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="BuildableComponent")
+	TObjectPtr<UMaterial> BuildableMaterialBad;
 
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category="BuildableComponent")
-	void Server_Build(const FTransform& Transform, class UBuildableData* Data);	
+	void Server_Build(const FTransform& Transform, UBuildableData* Data);	
+
+	UFUNCTION(BlueprintCallable, Category="BuildableComponent")
+	void PreviewBuilding(UBuildableData* Data);
+
+	UFUNCTION()
+	bool BuildingTrace(float Range, FHitResult &OutHitResult, FRotator &CameraRotation);
+
 };

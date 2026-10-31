@@ -5,6 +5,7 @@
 
 #include "Components/StaticMeshComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "Camera/CameraComponent.h"
 
 #include "Inventory/InventoryComponent.h"
 #include "Weapon/WeaponComponent.h"
@@ -20,6 +21,9 @@ class ARomeroPlayer : public ARomeroCharacter
 public:
 
 	ARomeroPlayer();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	TObjectPtr<UCameraComponent> Camera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	TObjectPtr<UInventoryComponent> InventoryComponent;
