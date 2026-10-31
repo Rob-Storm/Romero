@@ -1,1 +1,0 @@
-"C:/Unreal Engine/Installs/UE_5.5/Engine/Build/BatchFiles/Build.bat" RomeroEditor Win64 Development "C:/UEProjects/Romero/Romero.uproject" -waitmutex -NoHotReload

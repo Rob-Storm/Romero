@@ -1,1 +1,0 @@
-"C:/Unreal Engine/Installs/UE_5.5/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" "C:/UEProjects/Romero/Romero.uproject" -run=cook -targetplatform=Windows
