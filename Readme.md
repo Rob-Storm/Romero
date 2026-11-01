@@ -4,17 +4,17 @@
 
 ### Programming
 
-Rob Storm
+1. Rob Storm
 
 ### Modeling
 
-Inferno199
-Rob Storm
+1. Inferno199
+2. Rob Storm
 
 ### Textures
 
-Inferno199
-RobStorm
+1. Inferno199
+2. Rob Storm
 
 ### Audio
 
