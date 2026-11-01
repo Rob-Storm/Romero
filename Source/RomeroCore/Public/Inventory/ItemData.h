@@ -18,7 +18,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item")
 	FText ItemDescription;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item")
+	/** Used to determine which runtime data object to use. DO NOT EDIT MANUALLY */
+	UPROPERTY(BlueprintReadOnly, Category="Item")
 	TSubclassOf<class UItem> ObjectClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item")
