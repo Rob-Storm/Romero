@@ -29,6 +29,9 @@ public:
 	TObjectPtr<UStaticMesh> WorldModel;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item")
+	TObjectPtr<USoundBase> UseSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item")
 	bool CanStack;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item", meta=(EditCondition = "CanStack", ClampMin = "1", UIMin = "1"))
