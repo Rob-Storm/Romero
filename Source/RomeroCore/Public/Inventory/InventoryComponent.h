@@ -52,6 +52,9 @@ public:
 	void Server_SpawnItemActor(UItem* Item);
 
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category="Inventory")
+	void Server_UseItem(UItem* Item, EItemUseMode UseMode);
+
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category="Inventory")
 	void Server_UseEquippedItem(EItemUseMode UseMode);
 
 	/** Checks if an item containing the ItemData exists and returns the first instance found. Using nullptr or none will always return false */

@@ -97,14 +97,13 @@ void UInventoryComponent::Server_SpawnItemActor_Implementation(UItem* Item)
 	SpawnedItemActor->Model->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 }
 
-void UInventoryComponent::Server_UseEquippedItem_Implementation(EItemUseMode UseMode)
+void UInventoryComponent::Server_UseItem_Implementation(UItem* Item, EItemUseMode UseMode)
 {
-	if(!EquippedItem)
+	if(!Item)
 	{
-		UE_LOG(LogTemp, Log, TEXT("No equipped item"));
 		return;
 	}
-
+	
 	TObjectPtr<ARomeroPlayer> Pawn = Cast<ARomeroPlayer>(GetOwner());
 
 	if(!Pawn)
@@ -113,18 +112,29 @@ void UInventoryComponent::Server_UseEquippedItem_Implementation(EItemUseMode Use
 		return;
 	}
 
-	EquippedItem->UseItem(Pawn, UseMode);
+	Item->UseItem(Pawn, UseMode);
 
-	if(EquippedItem->GetItemData()->CanStack)
+	if(Item->GetItemData()->CanStack)
 	{
-		EquippedItem->CurrentStackCount--;
+		Item->CurrentStackCount--;
 
-		if(EquippedItem->CurrentStackCount <= 0)
+		if(Item->CurrentStackCount <= 0)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Last count of equipped item used, removing"));
-			Server_RemoveItem(EquippedItem);
+			UE_LOG(LogTemp, Warning, TEXT("Last count of item used, removing"));
+			Server_RemoveItem(Item);
 		}
 	}
+}
+
+void UInventoryComponent::Server_UseEquippedItem_Implementation(EItemUseMode UseMode)
+{
+	if(!EquippedItem)
+	{
+		UE_LOG(LogTemp, Log, TEXT("No equipped item"));
+		return;
+	}
+
+	Server_UseItem(EquippedItem, UseMode);
 }
 
 bool UInventoryComponent::HasItem(UItemData* ItemType, UItem* &OutFoundItem)

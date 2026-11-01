@@ -7,7 +7,7 @@
 
 #include "WeaponData.generated.h"
 
-UCLASS()
+UCLASS(PrioritizeCategories = "Weapon Data")
 class UWeaponData : public UItemData
 {
 	GENERATED_BODY()
