@@ -11,6 +11,7 @@
 #include "Weapon/WeaponComponent.h"
 #include "Buildable/BuildableComponent.h"
 #include "Nutrition/NutritionComponent.h"
+#include "Stamina/StaminaComponent.h"
 
 #include "RomeroPlayer.generated.h"
 
@@ -41,6 +42,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	TObjectPtr<UNutritionComponent> NutritionComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	TObjectPtr<UStaminaComponent> StaminaComponent;
+
 	/** Only the owner can see this */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	TObjectPtr<UStaticMeshComponent> FirstPersonItem;
@@ -55,6 +59,9 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category="RomeroCore")
 	void Server_SetPlayerText();
 
+	UPROPERTY(ReplicatedUsing = OnRep_IsSprinting)
+	bool IsSprinting = false;
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -66,10 +73,19 @@ private:
 	void OnRep_SetPawnName();
 
 	UFUNCTION()
+	void OnRep_IsSprinting();
+
+	UFUNCTION()
 	void HandleItemChanged(UItem* EquippedItem);
 
 	/** Function that gets called when you are dehydrated or starving */
 	UFUNCTION()
 	void HandleNutritionEmpty();
+
+	UFUNCTION(Server, Reliable)
+	void Server_HandleSprintStarted();
+
+	UFUNCTION(Server, Reliable)
+	void Server_HandleSprintEnded();
 	
 };

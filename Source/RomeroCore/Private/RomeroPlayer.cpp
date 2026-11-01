@@ -3,6 +3,7 @@
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/PlayerState.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "RomeroPlayerState.h"
 
 ARomeroPlayer::ARomeroPlayer()
@@ -12,6 +13,7 @@ ARomeroPlayer::ARomeroPlayer()
 	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
 	BuildComponent = CreateDefaultSubobject<UBuildableComponent>(TEXT("BuildComponent"));
 	NutritionComponent = CreateDefaultSubobject<UNutritionComponent>(TEXT("NutritionComponent"));
+	StaminaComponent = CreateDefaultSubobject<UStaminaComponent>(TEXT("StaminaComponent"));
 
 	PlayerNameText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("PlayerName"));
 
@@ -61,6 +63,8 @@ void ARomeroPlayer::PostInitializeComponents()
 	InventoryComponent->OnEquippedItemChanged.AddDynamic(this, &ARomeroPlayer::HandleItemChanged);
 	NutritionComponent->OnStarve.AddDynamic(this, &ARomeroPlayer::HandleNutritionEmpty);
 	NutritionComponent->OnDehydrate.AddDynamic(this, &ARomeroPlayer::HandleNutritionEmpty);
+	StaminaComponent->OnStartSprint.AddDynamic(this, &ARomeroPlayer::Server_HandleSprintStarted);
+	StaminaComponent->OnEndSprint.AddDynamic(this, &ARomeroPlayer::Server_HandleSprintEnded);
 }
 
 void ARomeroPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -68,11 +72,17 @@ void ARomeroPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ARomeroPlayer, PawnName);
+	DOREPLIFETIME(ARomeroPlayer, IsSprinting);
 }
 
 void ARomeroPlayer::OnRep_SetPawnName()
 {
 	PlayerNameText->SetText(FText::FromString(PawnName));
+}
+
+void ARomeroPlayer::OnRep_IsSprinting()
+{
+	GetCharacterMovement()->MaxWalkSpeed = IsSprinting ? 500.f : 250.f;
 }
 
 void ARomeroPlayer::HandleItemChanged(UItem* EquippedItem)
@@ -91,4 +101,16 @@ void ARomeroPlayer::HandleItemChanged(UItem* EquippedItem)
 void ARomeroPlayer::HandleNutritionEmpty()
 {
 	HealthComponent->Server_AddHealth(-10);
+}
+
+void ARomeroPlayer::Server_HandleSprintStarted_Implementation()
+{
+	IsSprinting = true;
+	OnRep_IsSprinting();
+}
+
+void ARomeroPlayer::Server_HandleSprintEnded_Implementation()
+{
+	IsSprinting = false;
+	OnRep_IsSprinting();
 }

@@ -2,6 +2,7 @@
 #include "Nutrition/NutritionComponent.h"
 #include "Nutrition/NutritionData.h"
 #include "Health/HealthComponent.h"
+#include "Stamina/StaminaComponent.h"
 #include "RomeroPlayer.h"
 
 void UNutritionItem::UseItem_Implementation(ARomeroPlayer* OwningPlayer, EItemUseMode UseMode)
@@ -22,6 +23,7 @@ void UNutritionItem::UseItem_Implementation(ARomeroPlayer* OwningPlayer, EItemUs
 				OwningPlayer->HealthComponent->Server_AddHealth(Amount);
 				break;
 			case EPlayerStat::Stamina:
+				OwningPlayer->StaminaComponent->Server_SetStamina_Implementation(OwningPlayer->StaminaComponent->CurrentStamina + Amount);
 				break;
 			case EPlayerStat::Hunger:
 				OwningPlayer->NutritionComponent->Server_SetHunger(OwningPlayer->NutritionComponent->CurrentHunger + Amount);
