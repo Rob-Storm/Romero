@@ -11,6 +11,7 @@ ARomeroPlayer::ARomeroPlayer()
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
 	BuildComponent = CreateDefaultSubobject<UBuildableComponent>(TEXT("BuildComponent"));
+	NutritionComponent = CreateDefaultSubobject<UNutritionComponent>(TEXT("NutritionComponent"));
 
 	PlayerNameText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("PlayerName"));
 
@@ -58,6 +59,8 @@ void ARomeroPlayer::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	InventoryComponent->OnEquippedItemChanged.AddDynamic(this, &ARomeroPlayer::HandleItemChanged);
+	NutritionComponent->OnStarve.AddDynamic(this, &ARomeroPlayer::HandleNutritionEmpty);
+	NutritionComponent->OnDehydrate.AddDynamic(this, &ARomeroPlayer::HandleNutritionEmpty);
 }
 
 void ARomeroPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -83,4 +86,9 @@ void ARomeroPlayer::HandleItemChanged(UItem* EquippedItem)
 
 	FirstPersonItem->SetStaticMesh(NewMesh);
 	ThirdPersonItem->SetStaticMesh(NewMesh);
+}
+
+void ARomeroPlayer::HandleNutritionEmpty()
+{
+	HealthComponent->Server_AddHealth(-10);
 }

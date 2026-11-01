@@ -10,6 +10,7 @@
 #include "Inventory/InventoryComponent.h"
 #include "Weapon/WeaponComponent.h"
 #include "Buildable/BuildableComponent.h"
+#include "Nutrition/NutritionComponent.h"
 
 #include "RomeroPlayer.generated.h"
 
@@ -37,6 +38,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	TObjectPtr<UBuildableComponent> BuildComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	TObjectPtr<UNutritionComponent> NutritionComponent;
+
 	/** Only the owner can see this */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	TObjectPtr<UStaticMeshComponent> FirstPersonItem;
@@ -63,5 +67,9 @@ private:
 
 	UFUNCTION()
 	void HandleItemChanged(UItem* EquippedItem);
+
+	/** Function that gets called when you are dehydrated or starving */
+	UFUNCTION()
+	void HandleNutritionEmpty();
 	
 };
