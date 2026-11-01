@@ -18,6 +18,8 @@ class UNutritionComponent : public UActorComponent
 
 public:
 
+	UNutritionComponent();
+
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, BlueprintReadWrite, Category="NutritionComponent")
 	FOnHungerTickedSignature OnHungerTicked;
 

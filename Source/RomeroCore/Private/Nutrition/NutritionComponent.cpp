@@ -4,6 +4,11 @@
 #include "TimerManager.h"
 #include "Math/UnrealMathUtility.h"
 
+UNutritionComponent::UNutritionComponent()
+{
+	SetIsReplicatedByDefault(true);
+}
+
 void UNutritionComponent::BeginPlay()
 {
 	Super::BeginPlay();

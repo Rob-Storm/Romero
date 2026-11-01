@@ -34,6 +34,9 @@ public:
 		ServerSerialize();
 	}
 
+	UFUNCTION(BlueprintCallable, Category="Multiplayer")
+	void AnnouncePlayerDead(APlayerState* DeadPlayer);
+
 	virtual void InitGame(const FString &MapName, const FString &Options, FString &ErrorMessage) override;
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
@@ -46,6 +49,9 @@ private:
 
 	UPROPERTY()
 	FString SlotName;
+
+	UPROPERTY()
+	FTimerHandle RespawnHandle;
 
 	UFUNCTION()
 	void ServerSerialize();

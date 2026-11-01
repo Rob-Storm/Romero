@@ -15,6 +15,27 @@
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
 
+void ARomeroGameMode::AnnouncePlayerDead(APlayerState* DeadPlayer)
+{
+	TObjectPtr<APlayerController> PC = DeadPlayer->GetPlayerController();
+	checkf(PC, TEXT("Player controller was not valid"));
+
+	PC->UnPossess();
+
+	SendServerMessage(DeadPlayer->GetPlayerName() + TEXT(" died"));
+
+	GetWorld()->GetTimerManager().SetTimer
+	(
+	    RespawnHandle,
+	    FTimerDelegate::CreateLambda([this, PC]()
+	    {
+	    	RestartPlayer(PC);
+	    }),
+	    5.f,
+	    false
+	);
+}
+
 void ARomeroGameMode::InitGame(const FString &MapName, const FString &Options, FString &ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
