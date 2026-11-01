@@ -25,8 +25,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ItemSpawner")
 	TArray<TObjectPtr<UItemData>> ItemClasses;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ItemSpawner")
+	float RespawnDelay = 300.f;
+
+	UPROPERTY()
+	TObjectPtr<class AItemActor> SpawnedItem;
+
+	UPROPERTY()
+	FTimerHandle RespawnTimerHandle;
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="ItemSpawner")
 	void SpawnItem();
+
+	UFUNCTION()
+	void OnItemDestroyed(AActor* DestroyedActor);
 
 	virtual void BeginPlay() override;
 };
